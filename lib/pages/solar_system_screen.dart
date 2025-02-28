@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:kidventure/data/celestial_bodies.dart';
 import 'package:kidventure/widgets/celestial_card.dart';
 import 'package:kidventure/widgets/starry_background.dart';
-
 import '../widgets/staggered_animation.dart';
 
 class SolarSystemScreen extends StatelessWidget {
@@ -39,7 +38,6 @@ class SolarSystemScreen extends StatelessWidget {
       style: TextStyle(
         fontSize: 32,
         fontWeight: FontWeight.bold,
-        fontFamily: 'CrimsonText',
       ),
     );
   }
