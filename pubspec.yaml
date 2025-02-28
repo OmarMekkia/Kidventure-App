@@ -9,6 +9,13 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_3d_controller: ^2.1.0
+  flutter_screenutil: ^5.9.3
+  youtube_player_flutter: ^9.1.1
+  flutter_flip_card: ^0.0.6
+  google_fonts: ^6.2.1
+  http: ^1.1.0
+  intl: ^0.18.1
 
 dev_dependencies:
   flutter_test:
@@ -17,3 +24,15 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/images/
+    - assets/fonts/
+    - assets/models/
+  fonts:
+    - family: Plus Jakarta Sans
+      fonts:
+        - asset: assets/fonts/PlusJakartaSans-Regular.ttf
+        - asset: assets/fonts/PlusJakartaSans-Bold.ttf
+        - asset: assets/fonts/PlusJakartaSans-Medium.ttf
+        - asset: assets/fonts/PlusJakartaSans-SemiBold.ttf
+        - asset: assets/fonts/PlusJakartaSans-ExtraBold.ttf

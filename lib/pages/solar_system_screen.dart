@@ -1,0 +1,81 @@
+import 'package:flutter/material.dart';
+import 'package:kidventure/data/celestial_bodies.dart';
+import 'package:kidventure/widgets/celestial_card.dart';
+import 'package:kidventure/widgets/starry_background.dart';
+
+import '../widgets/staggered_animation.dart';
+
+class SolarSystemScreen extends StatelessWidget {
+  const SolarSystemScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: _buildTitle(),
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
+      body: Stack(children: [const StarryBackground(), _buildContent()]),
+    );
+  }
+
+  Widget _buildContent() {
+    return SingleChildScrollView(
+      child: Column(children: [_buildCelestialGrid()]),
+    );
+  }
+
+  Widget _buildTitle() {
+    return const Text(
+      'Solar System 🚀',
+      style: TextStyle(
+        fontSize: 32,
+        fontWeight: FontWeight.bold,
+        fontFamily: 'CrimsonText',
+      ),
+    );
+  }
+
+  Widget _buildCelestialGrid() {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final crossAxisCount = _calculateCrossAxisCount(constraints.maxWidth);
+        return Padding(
+          padding: const EdgeInsets.all(16),
+          child: GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: crossAxisCount,
+              childAspectRatio: 1,
+              mainAxisSpacing: 16,
+              crossAxisSpacing: 16,
+            ),
+            itemCount: celestialBodies.length,
+            itemBuilder: (context, index) {
+              return StaggeredAnimation(
+                delay: index * 0.3,
+                child: CelestialCard(body: celestialBodies[index]),
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+
+  int _calculateCrossAxisCount(double width) {
+    if (width >= 1280) return 4;
+    if (width >= 960) return 3;
+    if (width >= 640) return 2;
+    return 1;
+  }
+}

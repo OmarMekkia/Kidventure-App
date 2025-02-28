@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:kidventure/pages/solar_system_screen.dart';
 
 void main() {
-  runApp(const MainApp());
+  runApp(const SolarSystemApp());
 }
 
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+class SolarSystemApp extends StatelessWidget {
+  const SolarSystemApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Text('Hello World!'),
-        ),
+    return MaterialApp(
+      title: 'Solar System Explorer',
+      theme: ThemeData.dark().copyWith(
+        scaffoldBackgroundColor: const Color(0xFF1A1A2E),
       ),
+      home: const SolarSystemScreen(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
