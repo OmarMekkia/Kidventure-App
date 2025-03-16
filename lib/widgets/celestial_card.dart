@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kidventure/pages/three_dimensional_view_page.dart';
+import 'package:kidventure/screens/three_dimensional_view_screen.dart';
 import '../models/celestial_body.dart';
 
 class CelestialCard extends StatefulWidget {
