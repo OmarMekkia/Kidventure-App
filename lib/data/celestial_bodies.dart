@@ -1,165 +1,165 @@
 import 'package:flutter/material.dart';
 import 'package:kidventure/models/celestial_body.dart';
 
-final List<CelestialBody> celestialBodies = const [
+final List<CelestialBody> celestialBodies = [
   CelestialBody(
-    id: "sun",
-    name: "Sun",
+    id: "شمس",
+    name: "الشمس",
     icon: "☀️",
     color: Color(0xFFFF6B6B),
-    description: "The star at the center of our Solar System",
+    description: "النجم الساطع في مركز نظامنا الشمسي",
     modelId: 1,
-    type: "star",
+    type: "نجم",
     order: 0,
     modelPath: "assets/models/sun.glb",
-    information: '''Name: Sun
-Size: 1.39 million km diameter (a star)
-Color: Yellow-white (glowing plasma)
-Description: Center of our Solar System
-Unique Feature: Powers life on Earth through nuclear fusion''',
+    information: '''الاسم: الشمس
+الحجم: قطرها ١.٣٩ مليون كيلومتر (نجم كبير)
+اللون: أصفر-أبيض (بلازما متوهجة)
+الوصف: مركز نظامنا الشمسي
+ميزة خاصة: تمد الأرض بالطاقة والحياة من خلال الاندماج النووي''',
   ),
   CelestialBody(
-    id: "mercury",
-    name: "Mercury",
+    id: "عطارد",
+    name: "عطارد",
     icon: "☿",
     color: Color(0xFFA7A7A7),
-    description: "The smallest and innermost planet",
+    description: "أصغر كواكب المجموعة الشمسية والأقرب للشمس",
     modelId: 2,
-    type: "planet",
+    type: "كوكب",
     order: 1,
     modelPath: "assets/models/mercury.glb",
-    information: '''Name: Mercury
-Size: 4,880 km diameter (smallest planet)
-Color: Gray with a rocky, cratered surface
-Description: Closest planet to the Sun
-Unique Feature: Extreme temperature swings (-173°C to 427°C)''',
+    information: '''الاسم: عطارد
+الحجم: قطره ٤,٨٨٠ كيلومتر (أصغر كوكب)
+اللون: رمادي مع سطح صخري مليء بالفوهات
+الوصف: أقرب كوكب إلى الشمس
+ميزة خاصة: تغيرات درجة حرارة شديدة (من -١٧٣°م إلى ٤٢٧°م)''',
   ),
   CelestialBody(
-    id: "venus",
-    name: "Venus",
+    id: "زهرة",
+    name: "الزهرة",
     icon: "♀",
     color: Color(0xFFE8B647),
-    description: "The second planet from the Sun",
+    description: "الكوكب الثاني من الشمس",
     modelId: 3,
-    type: "planet",
+    type: "كوكب",
     order: 2,
     modelPath: "assets/models/venus.glb",
-    information: '''Name: Venus
-Size: 12,104 km diameter (Earth's "twin")
-Color: Yellowish-white with thick clouds
-Description: Hottest planet (462°C average)
-Unique Feature: Rotates backward (retrograde rotation)''',
+    information: '''الاسم: الزهرة
+الحجم: قطره ١٢,١٠٤ كيلومتر (توأم الأرض)
+اللون: أصفر-أبيض مع سحب كثيفة
+الوصف: أسخن كوكب (متوسط درجة الحرارة ٤٦٢°م)
+ميزة خاصة: يدور عكس اتجاه باقي الكواكب (دوران عكسي)''',
   ),
   CelestialBody(
-    id: "earth",
-    name: "Earth",
+    id: "ارض",
+    name: "الأرض",
     icon: "🌍",
     color: Color(0xFF4ECDC4),
-    description: "Our home planet",
+    description: "كوكبنا الجميل الذي نعيش عليه",
     modelId: 4,
-    type: "planet",
+    type: "كوكب",
     order: 3,
     modelPath: "assets/models/earth.glb",
-    information: '''Name: Earth
-Size: 12,742 km diameter
-Color: Blue and green (water and land)
-Description: Only planet with confirmed life
-Unique Feature: 71% surface covered by water''',
+    information: '''الاسم: الأرض
+الحجم: قطرها ١٢,٧٤٢ كيلومتر
+اللون: أزرق وأخضر (ماء ويابسة)
+الوصف: الكوكب الوحيد المعروف بوجود حياة عليه
+ميزة خاصة: ٧١٪ من سطحه مغطى بالماء''',
   ),
   CelestialBody(
-    id: "moon",
-    name: "Moon",
+    id: "قمر",
+    name: "القمر",
     icon: "🌕",
     color: Color(0xFFD4D4D4),
-    description: "Earth's natural satellite",
+    description: "القمر الطبيعي للأرض",
     modelId: 5,
-    type: "moon",
+    type: "قمر",
     order: 4,
     modelPath: "assets/models/moon.glb",
-    information: '''Name: Moon
-Size: 3,474 km diameter (Earth's satellite)
-Color: Gray with cratered surface
-Description: Earth's natural companion
-Unique Feature: Causes ocean tides on Earth''',
+    information: '''الاسم: القمر
+الحجم: قطره ٣,٤٧٤ كيلومتر (تابع الأرض)
+اللون: رمادي مع سطح مليء بالفوهات
+الوصف: الرفيق الطبيعي للأرض
+ميزة خاصة: يسبب المد والجزر في محيطات الأرض''',
   ),
   CelestialBody(
-    id: "mars",
-    name: "Mars",
+    id: "مريخ",
+    name: "المريخ",
     icon: "♂",
     color: Color(0xFFFF4B4B),
-    description: "The red planet",
+    description: "الكوكب الأحمر",
     modelId: 6,
-    type: "planet",
+    type: "كوكب",
     order: 5,
     modelPath: "assets/models/mars.glb",
-    information: '''Name: Mars
-Size: 6,779 km diameter
-Color: Red (iron oxide-rich soil)
-Description: "Red Planet"
-Unique Feature: Largest volcano in the solar system (Olympus Mons)''',
+    information: '''الاسم: المريخ
+الحجم: قطره ٦,٧٧٩ كيلومتر
+اللون: أحمر (بسبب تربة غنية بأكسيد الحديد)
+الوصف: "الكوكب الأحمر"
+ميزة خاصة: يحتوي على أكبر بركان في النظام الشمسي (جبل أوليمبوس)''',
   ),
   CelestialBody(
-    id: "jupiter",
-    name: "Jupiter",
+    id: "مشتري",
+    name: "المشتري",
     icon: "♃",
     color: Color(0xFFE17055),
-    description: "The largest planet in our Solar System",
+    description: "أكبر كوكب في نظامنا الشمسي",
     modelId: 7,
-    type: "planet",
+    type: "كوكب",
     order: 6,
     modelPath: "assets/models/jupiter.glb",
-    information: '''Name: Jupiter
-Size: 139,820 km diameter (largest planet)
-Color: Orange and white bands
-Description: Gas giant with Great Red Spot storm
-Unique Feature: 95 known moons''',
+    information: '''الاسم: المشتري
+الحجم: قطره ١٣٩,٨٢٠ كيلومتر (أكبر كوكب)
+اللون: نطاقات برتقالية وبيضاء
+الوصف: عملاق غازي مع البقعة الحمراء العظيمة
+ميزة خاصة: له ٩٥ قمراً معروفاً''',
   ),
   CelestialBody(
-    id: "saturn",
-    name: "Saturn",
+    id: "زحل",
+    name: "زحل",
     icon: "🪐",
     color: Color(0xFFFAD390),
-    description: "The planet with spectacular rings",
+    description: "الكوكب ذو الحلقات الرائعة",
     modelId: 8,
-    type: "planet",
+    type: "كوكب",
     order: 7,
     modelPath: "assets/models/saturn.glb",
-    information: '''Name: Saturn
-Size: 116,460 km diameter
-Color: Pale gold with rings
-Description: Famous for its icy rings
-Unique Feature: Could float in water (low density)''',
+    information: '''الاسم: زحل
+الحجم: قطره ١١٦,٤٦٠ كيلومتر
+اللون: ذهبي شاحب مع حلقات
+الوصف: مشهور بحلقاته الجليدية
+ميزة خاصة: يمكن أن يطفو على الماء (كثافته منخفضة)''',
   ),
   CelestialBody(
-    id: "uranus",
-    name: "Uranus",
+    id: "اورانوس",
+    name: "أورانوس",
     icon: "♅",
     color: Color(0xFF81ECEC),
-    description: "The tilted ice giant",
+    description: "العملاق الجليدي المائل",
     modelId: 9,
-    type: "planet",
+    type: "كوكب",
     order: 8,
     modelPath: "assets/models/uranus.glb",
-    information: '''Name: Uranus
-Size: 50,724 km diameter
-Color: Pale blue-green (methane atmosphere)
-Description: Ice giant tilted on its side
-Unique Feature: -224°C coldest planet temperature''',
+    information: '''الاسم: أورانوس
+الحجم: قطره ٥٠,٧٢٤ كيلومتر
+اللون: أزرق-أخضر شاحب (غلاف جوي من الميثان)
+الوصف: عملاق جليدي مائل على جانبه
+ميزة خاصة: أبرد درجة حرارة بين الكواكب (-٢٢٤°م)''',
   ),
   CelestialBody(
-    id: "neptune",
-    name: "Neptune",
+    id: "نبتون",
+    name: "نبتون",
     icon: "♆",
     color: Color(0xFF4834D4),
-    description: "The windiest planet",
+    description: "الكوكب الأكثر عصفاً بالرياح",
     modelId: 10,
-    type: "planet",
+    type: "كوكب",
     order: 9,
     modelPath: "assets/models/neptune.glb",
-    information: '''Name: Neptune
-Size: 49,244 km diameter
-Color: Deep azure blue
-Description: Windiest planet (2,100 km/h winds)
-Unique Feature: Farthest planet from the Sun''',
+    information: '''الاسم: نبتون
+الحجم: قطره ٤٩,٢٤٤ كيلومتر
+اللون: أزرق عميق
+الوصف: أكثر كوكب عاصف (رياح بسرعة ٢,١٠٠ كم/ساعة)
+ميزة خاصة: أبعد كوكب عن الشمس''',
   ),
 ];

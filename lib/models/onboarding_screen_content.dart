@@ -1,6 +1,6 @@
-class SplashScreenContent {
+class OnBoardingScreenContent {
 
-  SplashScreenContent({
+  OnBoardingScreenContent({
     required this.title,
     required this.description,
     required this.lottiePath,

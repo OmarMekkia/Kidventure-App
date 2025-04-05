@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kidventure/screens/splash_screen.dart';
-
+import 'package:kidventure/screens/onboarding_screen.dart';
 void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
@@ -14,7 +13,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         fontFamily: 'CrimsonText',
       ),
-      home: const SplashScreen(),
+      home: const OnBoardingScreen(),
     );
   }
 }

@@ -21,26 +21,28 @@ class _CelestialCardState extends State<CelestialCard> {
   }
 
   Widget _buildCardContent() {
+    final mediaQuery = MediaQuery.of(context);
+    final screenWidth = mediaQuery.size.width;
+    final screenHeight = mediaQuery.size.height;
     return Container(
+      width: screenWidth,
+      height: screenHeight * 0.5,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         color: Colors.transparent,
         border: Border.all(color: widget.body.color, width: 1),
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _buildIcon(),
-            const SizedBox(height: 16),
-            _buildTitle(),
-            const SizedBox(height: 8),
-            _buildDescription(),
-            const SizedBox(height: 16),
-            _buildExploreButton(),
-          ],
-        ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          _buildIcon(),
+          const SizedBox(height: 16),
+          _buildTitle(),
+          const SizedBox(height: 8),
+          _buildDescription(),
+          const SizedBox(height: 16),
+          _buildExploreButton(),
+        ],
       ),
     );
   }
@@ -84,7 +86,7 @@ class _CelestialCardState extends State<CelestialCard> {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.transparent,
-        elevation: 10,
+        elevation: 5,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),
           side: BorderSide(color: widget.body.color, width: 1),
@@ -95,7 +97,7 @@ class _CelestialCardState extends State<CelestialCard> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            'Explore in 3D',
+            'استكشف بتقنية ثلاثية الأبعاد',
             style: TextStyle(
               color: widget.body.color,
               fontWeight: FontWeight.w500,

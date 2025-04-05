@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:kidventure/models/splash_screen_content.dart';
+import 'package:kidventure/models/onboarding_screen_content.dart';
 import 'package:lottie/lottie.dart';
 
-class SplashSlide extends StatefulWidget {
-  const SplashSlide({
+class OnboardingSlide extends StatefulWidget {
+  const OnboardingSlide({
     super.key,
-    required this.splashScreenContent,
+    required this.onBoardingScreenContent,
     required this.isActive,
   });
 
-  final SplashScreenContent splashScreenContent;
+  final OnBoardingScreenContent onBoardingScreenContent;
   final bool isActive;
 
   @override
-  State<SplashSlide> createState() => _SplashSlideState();
+  State<OnboardingSlide> createState() => _OnboardingSlideState();
 }
 
-class _SplashSlideState extends State<SplashSlide>
+class _OnboardingSlideState extends State<OnboardingSlide>
     with SingleTickerProviderStateMixin {
   late AnimationController animationController;
   late Animation<Offset> titleOffset;
@@ -64,7 +64,7 @@ class _SplashSlideState extends State<SplashSlide>
   }
 
   @override
-  void didUpdateWidget(covariant SplashSlide oldWidget) {
+  void didUpdateWidget(covariant OnboardingSlide oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.isActive && !oldWidget.isActive) {
       animationController.forward(from: 0);
@@ -89,12 +89,12 @@ class _SplashSlideState extends State<SplashSlide>
         children: [
           FadeTransition(
             opacity: lottieOpacity,
-            child: Lottie.asset(widget.splashScreenContent.lottiePath),
+            child: Lottie.asset(widget.onBoardingScreenContent.lottiePath),
           ),
           SlideTransition(
             position: titleOffset,
             child: Text(
-              widget.splashScreenContent.title,
+              widget.onBoardingScreenContent.title,
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 28,
@@ -107,7 +107,7 @@ class _SplashSlideState extends State<SplashSlide>
           SlideTransition(
             position: descriptionOffset,
             child: Text(
-              widget.splashScreenContent.description,
+              widget.onBoardingScreenContent.description,
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 18,

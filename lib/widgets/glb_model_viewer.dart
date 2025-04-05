@@ -28,42 +28,54 @@ class GlbModelViewerState extends State<GlbModelViewer> {
   void _initializeController() {
     _controller = Flutter3DController();
     _controller?.onModelLoaded.addListener(_handleModelLoaded);
+    
+    // Add a timeout to ensure we don't wait forever
+    Future.delayed(const Duration(seconds: 5), () {
+      if (mounted && !_isModelLoaded) {
+        setState(() => _isModelLoaded = true);
+        widget.onLoadStateChanged(true);
+      }
+    });
   }
 
   void _handleModelLoaded() {
-    if (_controller?.onModelLoaded.value == true) {
+    if (_controller?.onModelLoaded.value == true && !_isModelLoaded) {
       setState(() => _isModelLoaded = true);
       widget.onLoadStateChanged(true);
     }
   }
 
   @override
-  void dispose() {
-    _controller?.onModelLoaded.removeListener(_handleModelLoaded);
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return AnimatedOpacity(
-      opacity: _isModelLoaded ? 1.0 : 0.0,
-      duration: const Duration(milliseconds: 500),
-      child: Flutter3DViewer(
-        controller: _controller,
-        src: widget.modelPath,
-        progressBarColor: Colors.transparent,
-        activeGestureInterceptor: true,
-        enableTouch: true,
-        onProgress: (progress) => debugPrint('Loading: ${progress * 100}%'),
-        onLoad: (model) {
-          _controller?.playAnimation();
-          if (mounted) {
-            setState(() => _isModelLoaded = true);
-            widget.onLoadStateChanged(true);
-          }
-        },
-        onError: (error) => debugPrint('Error: $error'),
-      ),
+    return Flutter3DViewer(
+      controller: _controller,
+      src: widget.modelPath,
+      progressBarColor: Colors.transparent,
+      activeGestureInterceptor: true,
+      enableTouch: true,
+      onProgress: (progress) {
+        debugPrint('Loading: ${progress * 100}%');
+        // If progress is near completion, consider the model loaded
+        if (progress > 0.95 && !_isModelLoaded) {
+          setState(() => _isModelLoaded = true);
+          widget.onLoadStateChanged(true);
+        }
+      },
+      onLoad: (model) {
+        _controller?.playAnimation();
+        if (mounted && !_isModelLoaded) {
+          setState(() => _isModelLoaded = true);
+          widget.onLoadStateChanged(true);
+        }
+      },
+      onError: (error) {
+        debugPrint('Error: $error');
+        // Even on error, we should hide the loading indicator
+        if (mounted && !_isModelLoaded) {
+          setState(() => _isModelLoaded = true);
+          widget.onLoadStateChanged(true);
+        }
+      },
     );
   }
 
