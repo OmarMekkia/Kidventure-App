@@ -18,6 +18,10 @@ class GlbModelViewer extends StatefulWidget {
 class GlbModelViewerState extends State<GlbModelViewer> {
   Flutter3DController? _controller;
   bool _isModelLoaded = false;
+  bool _hasNotifiedLoaded = false;
+  double _currentZoom = 5.0;
+  double _orbitX = 0.0;
+  double _orbitY = 0.0;
 
   @override
   void initState() {
@@ -28,20 +32,36 @@ class GlbModelViewerState extends State<GlbModelViewer> {
   void _initializeController() {
     _controller = Flutter3DController();
     _controller?.onModelLoaded.addListener(_handleModelLoaded);
-    
-    // Add a timeout to ensure we don't wait forever
+
+    // Shorter timeout as a fallback only
     Future.delayed(const Duration(seconds: 5), () {
-      if (mounted && !_isModelLoaded) {
-        setState(() => _isModelLoaded = true);
-        widget.onLoadStateChanged(true);
-      }
+      _notifyLoadedIfNeeded();
     });
   }
 
-  void _handleModelLoaded() {
-    if (_controller?.onModelLoaded.value == true && !_isModelLoaded) {
+  void _notifyLoadedIfNeeded() {
+    if (mounted && !_hasNotifiedLoaded) {
+      _hasNotifiedLoaded = true;
       setState(() => _isModelLoaded = true);
       widget.onLoadStateChanged(true);
+    }
+  }
+
+  void disposeController() {
+    _controller?.onModelLoaded.removeListener(_handleModelLoaded);
+    _controller?.onModelLoaded.dispose();
+    _controller = null;
+  }
+
+  @override
+  void dispose() {
+    disposeController();
+    super.dispose();
+  }
+
+  void _handleModelLoaded() {
+    if (_controller?.onModelLoaded.value == true) {
+      _notifyLoadedIfNeeded();
     }
   }
 
@@ -54,36 +74,59 @@ class GlbModelViewerState extends State<GlbModelViewer> {
       activeGestureInterceptor: true,
       enableTouch: true,
       onProgress: (progress) {
-        debugPrint('Loading: ${progress * 100}%');
-        // If progress is near completion, consider the model loaded
-        if (progress > 0.95 && !_isModelLoaded) {
-          setState(() => _isModelLoaded = true);
-          widget.onLoadStateChanged(true);
+        // Consider model loaded when progress is significant
+        if (progress > 0.8 && !_hasNotifiedLoaded) {
+          _notifyLoadedIfNeeded();
         }
       },
       onLoad: (model) {
         _controller?.playAnimation();
-        if (mounted && !_isModelLoaded) {
-          setState(() => _isModelLoaded = true);
-          widget.onLoadStateChanged(true);
-        }
+        _notifyLoadedIfNeeded();
       },
       onError: (error) {
-        debugPrint('Error: $error');
-        // Even on error, we should hide the loading indicator
-        if (mounted && !_isModelLoaded) {
-          setState(() => _isModelLoaded = true);
-          widget.onLoadStateChanged(true);
-        }
+        debugPrint('Error loading 3D model: $error');
+        // Even on error, we should show the UI rather than an infinite loading state
+        _notifyLoadedIfNeeded();
       },
     );
   }
 
   void setCameraOrbit(double x, double y, double z) {
-    _controller?.setCameraOrbit(x, y, z);
+    try {
+      _controller?.setCameraOrbit(x, y, z);
+    } catch (e) {
+      debugPrint('Error setting camera orbit: $e');
+    }
+  }
+
+  void setZoom(double zoom) {
+    try {
+      _currentZoom = zoom;
+      // Apply zoom while preserving rotation
+      _controller?.setCameraOrbit(_orbitX, _orbitY, zoom);
+    } catch (e) {
+      debugPrint('Error setting zoom: $e');
+    }
+  }
+
+  void rotateModel(double x, double y) {
+    try {
+      _orbitX = x;
+      _orbitY = y;
+      _controller?.setCameraOrbit(x, y, _currentZoom);
+    } catch (e) {
+      debugPrint('Error rotating model: $e');
+    }
   }
 
   void resetCameraOrbit() {
-    _controller?.resetCameraOrbit();
+    try {
+      _orbitX = 0.0;
+      _orbitY = 0.0;
+      _currentZoom = 5.0;
+      _controller?.resetCameraOrbit();
+    } catch (e) {
+      debugPrint('Error resetting camera: $e');
+    }
   }
 }

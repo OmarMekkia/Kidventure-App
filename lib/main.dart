@@ -1,6 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:kidventure/screens/onboarding_screen.dart';
-void main() => runApp(const MyApp());
+import 'package:kidventure/secrets.dart';
+
+Future <void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  Gemini.init(apiKey: googleGeminiAPI, enableDebugging: true);
+
+  runApp(const MyApp());
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -10,9 +19,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Kidventure',
-      theme: ThemeData(
-        fontFamily: 'CrimsonText',
-      ),
+      theme: ThemeData(fontFamily: 'CrimsonText'),
       home: const OnBoardingScreen(),
     );
   }

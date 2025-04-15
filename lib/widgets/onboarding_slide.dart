@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kidventure/constants/app_colors.dart';
 import 'package:kidventure/models/onboarding_screen_content.dart';
 import 'package:lottie/lottie.dart';
 
@@ -84,7 +85,8 @@ class _OnboardingSlideState extends State<OnboardingSlide>
     return Padding(
       padding: const EdgeInsets.all(24),
       child: Column(
-        spacing: 18,
+        spacing: 16,
+        crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           FadeTransition(
@@ -99,7 +101,7 @@ class _OnboardingSlideState extends State<OnboardingSlide>
               style: TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFFFF6B6B),
+                color: AppColors.primary,
                 height: 1.3,
               ),
             ),
@@ -112,7 +114,7 @@ class _OnboardingSlideState extends State<OnboardingSlide>
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFF666666),
+                color: AppColors.textSecondary,
                 height: 1.4,
               ),
             ),

@@ -72,7 +72,7 @@ class _CelestialInfoOverlayState extends State<CelestialInfoOverlay>
             constraints: const BoxConstraints(maxWidth: 300),
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.transparent.withValues(),
+              color: Colors.transparent,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
                 color: widget.celestialBody.color.withValues(),
@@ -120,14 +120,14 @@ class _CelestialInfoOverlayState extends State<CelestialInfoOverlay>
   Widget _buildDescription() {
     return Text(
       widget.celestialBody.description,
-      style: const TextStyle(color: Colors.white70, fontSize: 14, height: 1.5),
+      style: const TextStyle(color: Colors.white, fontSize: 16, height: 1.5),
     );
   }
 
   Widget _buildInformation() {
     return Text(
       widget.celestialBody.information,
-      style: const TextStyle(color: Colors.white60, fontSize: 12, height: 1.4),
+      style: const TextStyle(color: Colors.white, fontSize: 14, height: 1.4),
     );
   }
 }

@@ -97,7 +97,7 @@ class _CelestialCardState extends State<CelestialCard> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            'استكشف بتقنية ثلاثية الأبعاد',
+            "Explore In 3D",
             style: TextStyle(
               color: widget.body.color,
               fontWeight: FontWeight.w500,

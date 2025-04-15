@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:kidventure/constants/app_colors.dart';
 import 'package:kidventure/data/feature_card_contents.dart';
-import 'package:kidventure/screens/premium_plan_screen.dart';
+import 'package:kidventure/screens/settings_screen.dart';
+import 'package:kidventure/widgets/custom_app_bar.dart';
 import 'package:kidventure/widgets/feature_card.dart';
 import 'package:kidventure/widgets/home_app_bar.dart';
-import 'package:kidventure/widgets/premium_plan_card.dart';
+import 'package:kidventure/screens/chat_screen.dart';
+import 'package:kidventure/screens/path_home_page.dart';
+import 'package:kidventure/screens/performance_analysis_screen.dart';
+import 'package:kidventure/widgets/staggered_animation.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -15,57 +19,139 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   String activeTab = "home";
+  late final PageController _pageController;
+
+  @override
+  void initState() {
+    _pageController = PageController(initialPage: 2);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
 
   void setTab(String tab) {
     setState(() {
       activeTab = tab;
+      // Switch to the appropriate page when tab changes
+      switch (tab) {
+        case "performance":
+          _pageController.jumpToPage(0);
+          break;
+        case "Mind Map":
+          _pageController.jumpToPage(1);
+          break;
+        case "home":
+          _pageController.jumpToPage(2);
+          break;
+        case "chat":
+          _pageController.jumpToPage(3);
+          break;
+        case "setting":
+          _pageController.jumpToPage(4);
+          break;
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    // Use Directionality to support RTL for Arabic
-    return Directionality(
-      textDirection: TextDirection.rtl, // Set RTL direction for Arabic
-      child: Scaffold(
-        backgroundColor: AppColors.background,
-        body: SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const HomeAppBar(
-                userName: "عمر حسام", // Arabic name
-                userAvatar: "assets/images/user_avatar.png",
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            StaggeredAnimation(delay: 0.1, child: _buildAppBar()),
+            Expanded(
+              child: PageView(
+                controller: _pageController,
+                physics: const BouncingScrollPhysics(),
+                onPageChanged: (index) {
+                  // Update the active tab when page changes
+                  setState(() {
+                    switch (index) {
+                      case 0:
+                        activeTab = "performance";
+                        break;
+                      case 1:
+                        activeTab = "Mind Map";
+                        break;
+                      case 2:
+                        activeTab = "home";
+                        break;
+                      case 3:
+                        activeTab = "chat";
+                        break;
+                      case 4:
+                        activeTab = "setting";
+                        break;
+                    }
+                  });
+                },
+                children: [
+                  const PerformanceAnalysisScreen(),
+                  const PathHomePage(),
+                  _buildHomeContent(),
+                  const ChatScreen(),
+                  const SettingsScreen(),
+                ],
               ),
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    spacing: 18,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      PremiumPlanCard(
-                        onUpgrade:
-                            () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder:
-                                    (context) => const PremiumPlansScreen(),
-                              ),
-                            ),
-                      ),
-                      ...featureCardContents.map(
-                        (featureCardContent) =>
-                            FeatureCard(featureCardContent: featureCardContent),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
-        bottomNavigationBar: _buildBottomNavigation(),
+      ),
+      bottomNavigationBar: StaggeredAnimation(
+        delay: 0.3,
+        child: _buildBottomNavigation(),
+      ),
+    );
+  }
+
+  Widget _buildAppBar() {
+    // Show different app bar based on active tab
+    if (activeTab == "home") {
+      return const HomeAppBar(
+        userName: "Omar Hossam",
+        userAvatar: "assets/images/user_avatar.png",
+      );
+    } else if (activeTab == "chat") {
+      return const CustomAppBar(title: "Chat With AI");
+    } else if (activeTab == "Mind Map") {
+      return const CustomAppBar(title: "Mind Map");
+    } else if (activeTab == "performance") {
+      return const HomeAppBar(
+        userName: "Omar Hossam",
+        userAvatar: "assets/images/user_avatar.png",
+      );
+    } else if (activeTab == "setting") {
+      return const CustomAppBar(title: "Settings");
+    }
+
+    return const SizedBox.shrink();
+  }
+
+  Widget _buildHomeContent() {
+    return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        spacing: 16,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ...featureCardContents.asMap().entries.map(
+            (entry) => StaggeredAnimation(
+              delay: 0.2 + (entry.key * 0.1),
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 16.0),
+                child: FeatureCard(featureCardContent: entry.value),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -81,8 +167,8 @@ class _HomeScreenState extends State<HomeScreen> {
         boxShadow: [
           BoxShadow(
             color: Colors.grey,
-            blurRadius: 8,
-            spreadRadius: 2,
+            blurRadius: 4,
+            spreadRadius: 1,
             offset: const Offset(0, 2),
           ),
         ],
@@ -93,16 +179,16 @@ class _HomeScreenState extends State<HomeScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             _buildNavItem(
-              "books",
-              Icons.book,
-              AppColors.booksTab,
-              AppColors.booksTabBackground,
+              "performance",
+              Icons.emoji_events,
+              AppColors.performanceTab,
+              AppColors.performanceTabBackground,
             ),
             _buildNavItem(
-              "games",
-              Icons.sports_esports,
-              AppColors.gamesTab,
-              AppColors.gamesTabBackground,
+              "Mind Map",
+              Icons.map,
+              AppColors.mindMapTab,
+              AppColors.mindMapTabBackground,
             ),
             _buildNavItem(
               "home",
@@ -117,10 +203,10 @@ class _HomeScreenState extends State<HomeScreen> {
               AppColors.chatTabBackground,
             ),
             _buildNavItem(
-              "profile",
-              Icons.person,
-              AppColors.profileTab,
-              AppColors.profileTabBackground,
+              "setting",
+              Icons.settings,
+              AppColors.settingsTab,
+              AppColors.settingsTabBackground,
             ),
           ],
         ),

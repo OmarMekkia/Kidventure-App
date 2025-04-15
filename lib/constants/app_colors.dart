@@ -15,15 +15,15 @@ class AppColors {
 
   // Tab colors
   static const Color homeTab = Color(0xFFFF6B6B);
-  static const Color booksTab = Color(0xFFFF9EAA);
-  static const Color gamesTab = Color(0xFF4ECDC4);
+  static const Color performanceTab = Color(0xFFFF9EAA);
+  static const Color mindMapTab = Color(0xFF4ECDC4);
   static const Color chatTab = Color(0xFF45B7D1);
-  static const Color profileTab = Color(0xFFFFB347);
+  static const Color settingsTab = Color(0xFFFFB347);
 
   // Tab background colors
   static const Color homeTabBackground = Color(0xFFFFE5E5);
-  static const Color booksTabBackground = Color(0xFFFFE5E5);
-  static const Color gamesTabBackground = Color(0xFFE5FFF9);
+  static const Color mindMapTabBackground = Color(0xFFFFE5E5);
+  static const Color performanceTabBackground = Color(0xFFE5FFF9);
   static const Color chatTabBackground = Color(0xFFE5F6FF);
-  static const Color profileTabBackground = Color(0xFFFFF5E5);
+  static const Color settingsTabBackground = Color(0xFFFFF5E5);
 }

@@ -15,17 +15,7 @@ class HomeAppBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        color: AppColors.background,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey,
-            blurRadius: 8,
-            spreadRadius: 2,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
+      decoration: BoxDecoration(color: AppColors.background),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -41,7 +31,7 @@ class HomeAppBar extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "مرحباً أيها المستكشف الصغير،",
+                    "Hi, Little Explorer!",
                     style: TextStyle(
                       fontSize: 14,
                       color: AppColors.textSecondary,
@@ -56,7 +46,7 @@ class HomeAppBar extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    "مغامرتك تبدأ هنا",
+                    "Your Adventure Starts Here!",
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
@@ -75,13 +65,6 @@ class HomeAppBar extends StatelessWidget {
                   color: AppColors.textSecondary,
                 ),
                 onPressed: () {}, // Add notification functionality
-              ),
-              IconButton(
-                icon: const Icon(
-                  Icons.settings_outlined,
-                  color: AppColors.textSecondary,
-                ),
-                onPressed: () {}, // Add settings functionality
               ),
             ],
           ),

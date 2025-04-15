@@ -36,10 +36,10 @@ class FeatureCard extends StatelessWidget {
       child: Stack(
         children: [
           Positioned(
-            left: 0,
+            left: 200,
             top: 0,
             bottom: 0,
-            right: 200,
+            right: 0,
             child: Lottie.asset(
               featureCardContent.lottiePath,
               fit: BoxFit.contain,

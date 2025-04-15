@@ -10,31 +10,28 @@ class SolarSystemScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(
-        appBar: AppBar(
-          title: _buildTitle(),
-          centerTitle: true,
-          backgroundColor: Color(0XFF1E293B),
-          foregroundColor: AppColors.primary,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back, size: 28),
-            onPressed: () {
-              Navigator.pop(context);
-            },
+    return Scaffold(
+      appBar: AppBar(
+        title: _buildTitle(),
+        centerTitle: true,
+        backgroundColor: Color(0XFF1E293B),
+        foregroundColor: AppColors.primary,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, size: 28),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color(0XFF1E293B), Color(0XFF0F172A)],
           ),
         ),
-        body: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [Color(0XFF1E293B), Color(0XFF0F172A)],
-            ),
-          ),
-          child: Stack(children: [const StarryBackground(), _buildContent()]),
-        ),
+        child: Stack(children: [const StarryBackground(), _buildContent()]),
       ),
     );
   }
@@ -47,8 +44,8 @@ class SolarSystemScreen extends StatelessWidget {
 
   Widget _buildTitle() {
     return Text(
-      'مستكشف النظام الشمسي',
-      style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+      'Solar System Exploration',
+      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
     );
   }
 

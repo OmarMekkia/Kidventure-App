@@ -38,80 +38,72 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.rtl, // Set RTL direction for Arabic
-      child: Scaffold(
-        backgroundColor: AppColors.background,
-        body: Stack(
-          children: [
-            PageView.builder(
-              itemBuilder:
-                  (context, index) => OnboardingSlide(
-                    onBoardingScreenContent: onBoardingScreenContents[index],
-                    isActive: index == currentPage,
-                  ),
-              itemCount: onBoardingScreenContents.length,
-              controller: pageController,
-              onPageChanged: (index) => setState(() => currentPage = index),
-            ),
-            Positioned(
-              bottom: 40,
-              left: 0,
-              right: 0,
-              child: Column(
-                spacing: 24,
-                children: [
-                  IndicatorDots(
-                    count: onBoardingScreenContents.length,
-                    currentIndex: currentPage,
-                    onDotPressed:
-                        (index) => pageController.animateToPage(
-                          index,
-                          duration: const Duration(milliseconds: 500),
-                          curve: Curves.easeInOut,
-                        ),
-                  ),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 32,
-                        vertical: 16,
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      body: Stack(
+        children: [
+          PageView.builder(
+            itemBuilder:
+                (context, index) => OnboardingSlide(
+                  onBoardingScreenContent: onBoardingScreenContents[index],
+                  isActive: index == currentPage,
+                ),
+            itemCount: onBoardingScreenContents.length,
+            controller: pageController,
+            onPageChanged: (index) => setState(() => currentPage = index),
+          ),
+          Positioned(
+            bottom: 20,
+            left: 0,
+            right: 0,
+            child: Column(
+              spacing: 24,
+              children: [
+                IndicatorDots(
+                  count: onBoardingScreenContents.length,
+                  currentIndex: currentPage,
+                  onDotPressed:
+                      (index) => pageController.animateToPage(
+                        index,
+                        duration: const Duration(milliseconds: 500),
+                        curve: Curves.easeInOut,
                       ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(28),
-                      ),
-                      elevation: 5,
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 32,
+                      vertical: 16,
                     ),
-                    onPressed: goToNextPage,
-                    child: Row(
-                      spacing: 8,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          currentPage == onBoardingScreenContents.length - 1
-                              ? "ابدأ الآن" // "Get Started" in Egyptian Arabic
-                              : "التالي", // "Next" in Egyptian Arabic
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                        // Change arrow direction for RTL
-                        Icon(
-                          Icons.arrow_forward,
-                          size: 18,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(28),
+                    ),
+                    elevation: 2,
+                  ),
+                  onPressed: goToNextPage,
+                  child: Row(
+                    spacing: 8,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        currentPage == onBoardingScreenContents.length - 1
+                            ? "Get Started"
+                            : "Next",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
                           color: Colors.white,
                         ),
-                      ],
-                    ),
+                      ),
+                      Icon(Icons.arrow_forward, size: 18, color: Colors.white),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
