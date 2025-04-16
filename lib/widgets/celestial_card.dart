@@ -115,7 +115,7 @@ class _CelestialCardState extends State<CelestialCard> {
       context,
       MaterialPageRoute(
         builder:
-            (context) => ThreeDimensionalViewPage(
+            (context) => ThreeDimensionalViewScreen(
               modelPath: widget.body.modelPath,
               celestialBody: widget.body,
             ),

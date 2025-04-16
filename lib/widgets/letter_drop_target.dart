@@ -5,7 +5,8 @@ class LetterDropTarget extends StatelessWidget {
   final String selectedLetter;
   final void Function(String) onAccept;
 
-  const LetterDropTarget({super.key,
+  const LetterDropTarget({
+    super.key,
     required this.letter,
     required this.selectedLetter,
     required this.onAccept,
@@ -16,9 +17,10 @@ class LetterDropTarget extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
     final letterBoxSize = screenWidth / 7;
     return DragTarget<String>(
-      onWillAcceptWithDetails: (data) => data == letter && selectedLetter.isEmpty,
-      onAccept: (data) {
-        onAccept(data);
+      onWillAcceptWithDetails:
+          (details) => details.data == letter && selectedLetter.isEmpty,
+      onAcceptWithDetails: (details) {
+        onAccept(details.data);
       },
       builder: (context, candidateData, rejectedData) {
         return AnimatedContainer(

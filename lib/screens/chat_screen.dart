@@ -13,7 +13,7 @@ class ChatScreen extends StatefulWidget {
   ChatScreenState createState() => ChatScreenState();
 }
 
-class ChatScreenState extends State<ChatScreen> {
+class ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
   final List<ChatMessage> _messages = [];
   final TextEditingController _textController = TextEditingController();
   final Gemini _gemini = Gemini.instance;
@@ -22,6 +22,7 @@ class ChatScreenState extends State<ChatScreen> {
   final SpeechToText _speechToText = SpeechToText();
   bool _speechEnabled = false;
   bool _isListening = false;
+  bool _isInitializingSpeech = false;
   final String _promptInstructions = """
 You are a friendly chatbot for kids aged 6-12. Use simple words, playful emojis, and keep answers short.
 NEVER mention anything about:
@@ -41,6 +42,8 @@ You can talk about Palastine.
 If someone asks about tricky topics, say:
 "Let's talk about something fun instead! 🌈 How about [suggestion]?"
 
+talk to them as the same language as they are using.
+
 Example response:
 "That's a great question! 🎉 Did you know butterflies taste with their feet? 🦋 Let's draw one! ✏️"
 """;
@@ -49,39 +52,104 @@ Example response:
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
+    WidgetsBinding.instance.addObserver(this);
     _initSpeech();
   }
 
-  // Initialize speech recognition
-  void _initSpeech() async {
-    _speechEnabled = await _speechToText.initialize(
-      onStatus: _onSpeechStatus,
-      onError: _onSpeechError,
-    );
-    setState(() {});
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.detached) {
+      // Stop listening when app goes to background
+      if (_isListening) {
+        _stopListening();
+      }
+    }
   }
 
-  // Start listening for speech
-  void _startListening() async {
-    if (_speechEnabled) {
-      setState(() {
-        _isListening = true;
-      });
+  // Initialize speech recognition with better error handling
+  Future<void> _initSpeech() async {
+    if (_isInitializingSpeech) return;
 
-      await _speechToText.listen(
+    setState(() {
+      _isInitializingSpeech = true;
+    });
+
+    try {
+      _speechEnabled = await _speechToText.initialize(
+        onStatus: _onSpeechStatus,
+        onError: _onSpeechError,
+      );
+
+      if (!_speechEnabled) {
+        _showFeedback('Speech recognition not available on this device');
+      }
+    } catch (error) {
+      _speechEnabled = false;
+      _showFeedback(
+        'Failed to initialize speech recognition: ${error.toString()}',
+      );
+    } finally {
+      setState(() {
+        _isInitializingSpeech = false;
+      });
+    }
+  }
+
+  // Show feedback to the user
+  void _showFeedback(String message) {
+    final feedbackMessage = ChatMessage(role: "assistant", content: message);
+    setState(() {
+      _messages.add(feedbackMessage);
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
+  }
+
+  // Update listening state safely
+  void _updateListeningState(bool isListening) {
+    if (mounted && _isListening != isListening) {
+      setState(() {
+        _isListening = isListening;
+      });
+    }
+  }
+
+  // Start listening for speech with improved error handling
+  void _startListening() async {
+    if (!_speechEnabled) {
+      // Try to initialize again if it failed previously
+      await _initSpeech();
+      if (!_speechEnabled) {
+        _showFeedback(
+          'Cannot start listening. Speech recognition is not available.',
+        );
+        return;
+      }
+    }
+
+    try {
+      _updateListeningState(true);
+
+      _speechToText.listen(
         onResult: _onSpeechResult,
         listenFor: const Duration(seconds: 30),
         pauseFor: const Duration(seconds: 3),
         listenOptions: SpeechListenOptions(cancelOnError: true),
       );
+    } catch (error) {
+      _updateListeningState(false);
+      _showFeedback('Error starting speech recognition: ${error.toString()}');
     }
   }
 
   void _stopListening() async {
-    await _speechToText.stop();
-    setState(() {
-      _isListening = false;
-    });
+    try {
+      await _speechToText.stop();
+    } catch (error) {
+      _showFeedback('Error stopping speech recognition: ${error.toString()}');
+    } finally {
+      _updateListeningState(false);
+    }
   }
 
   void _onSpeechResult(SpeechRecognitionResult result) {
@@ -95,22 +163,12 @@ Example response:
   }
 
   void _onSpeechStatus(String status) {
-    setState(() {
-      _isListening = status == 'listening';
-    });
+    _updateListeningState(status == 'listening');
   }
 
   void _onSpeechError(dynamic error) {
-    setState(() {
-      _isListening = false;
-    });
-    final errorMessage = ChatMessage(
-      role: "assistant",
-      content: 'Speech recognition error: ${error.toString()}',
-    );
-    setState(() {
-      _messages.add(errorMessage);
-    });
+    _updateListeningState(false);
+    _showFeedback('Speech recognition error: ${error.toString()}');
   }
 
   void _scrollToBottom() {
@@ -196,7 +254,15 @@ Example response:
 
   @override
   void dispose() {
-    _speechToText.cancel();
+    try {
+      if (_isListening) {
+        _speechToText.stop();
+      }
+      _speechToText.cancel();
+    } catch (e) {
+      // Ignore errors during disposal
+    }
+    WidgetsBinding.instance.removeObserver(this);
     _scrollController.dispose();
     _textController.dispose();
     super.dispose();

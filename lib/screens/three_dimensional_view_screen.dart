@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import '../models/camera_position.dart';
@@ -7,8 +8,8 @@ import '../widgets/glb_model_viewer.dart';
 import '../widgets/obj_model_viewer.dart';
 import '../widgets/starry_background.dart';
 
-class ThreeDimensionalViewPage extends StatefulWidget {
-  const ThreeDimensionalViewPage({
+class ThreeDimensionalViewScreen extends StatefulWidget {
+  const ThreeDimensionalViewScreen({
     super.key,
     required this.modelPath,
     required this.celestialBody,
@@ -22,20 +23,24 @@ class ThreeDimensionalViewPage extends StatefulWidget {
   final CameraPosition cameraPosition;
 
   @override
-  State<ThreeDimensionalViewPage> createState() =>
-      _ThreeDimensionalViewPageState();
+  State<ThreeDimensionalViewScreen> createState() =>
+      _ThreeDimensionalViewScreenState();
 }
 
-class _ThreeDimensionalViewPageState extends State<ThreeDimensionalViewPage>
+class _ThreeDimensionalViewScreenState extends State<ThreeDimensionalViewScreen>
     with AutomaticKeepAliveClientMixin {
   final GlobalKey<GlbModelViewerState> _glbViewerKey = GlobalKey();
   bool _isModelLoaded = false;
   bool _isLoading = true;
+  bool _hasError = false;
+  String _errorMessage = '';
   double _currentZoom = 5.0;
   static const double _minZoom = 2.0;
   static const double _maxZoom = 15.0;
   double _rotationX = 0.0;
   double _rotationY = 0.0;
+  Timer? _loadingTimeout;
+  Timer? _debounceTimer;
 
   bool get _isGlbModel => widget.modelPath.toLowerCase().endsWith('.glb');
 
@@ -45,17 +50,52 @@ class _ThreeDimensionalViewPageState extends State<ThreeDimensionalViewPage>
   @override
   void initState() {
     super.initState();
+
+    // Set timeout for model loading
+    _loadingTimeout = Timer(const Duration(seconds: 30), () {
+      if (mounted && _isLoading) {
+        setState(() {
+          _isLoading = false;
+          _hasError = true;
+          _errorMessage = 'Model loading timed out. Please try again later.';
+        });
+      }
+    });
+
     // Immediately start loading non-GLB models
     if (!_isGlbModel) {
       Future.microtask(() {
         if (mounted) {
-          setState(() {
-            _isModelLoaded = true;
-            _isLoading = false;
-          });
+          try {
+            setState(() {
+              _isModelLoaded = true;
+              _isLoading = false;
+            });
+          } catch (error) {
+            _handleError('Failed to load model: $error');
+          }
         }
       });
     }
+  }
+
+  void _handleError(String message) {
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+        _hasError = true;
+        _errorMessage = message;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _loadingTimeout?.cancel();
+    _debounceTimer?.cancel();
+    // Clean up any other resources
+    
+    super.dispose();
   }
 
   @override
@@ -73,11 +113,16 @@ class _ThreeDimensionalViewPageState extends State<ThreeDimensionalViewPage>
         title: const Text("3D View", style: TextStyle(color: Colors.white)),
       ),
       body: SafeArea(child: _buildModelViewer()),
-      floatingActionButton: _isModelLoaded ? _buildControlPanel() : null,
+      floatingActionButton:
+          _isModelLoaded && !_hasError ? _buildControlPanel() : null,
     );
   }
 
   Widget _buildModelViewer() {
+    if (_hasError) {
+      return _buildErrorView();
+    }
+
     return Stack(
       fit: StackFit.expand,
       children: [
@@ -113,21 +158,117 @@ class _ThreeDimensionalViewPageState extends State<ThreeDimensionalViewPage>
     );
   }
 
+  Widget _buildErrorView() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.black,
+        image: DecorationImage(
+          image: AssetImage('assets/lotties/error_lottie.json'),
+          fit: BoxFit.cover,
+          opacity: 0.5,
+        ),
+      ),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.error_outline, color: Colors.red[300], size: 60),
+            const SizedBox(height: 16),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: Text(
+                _errorMessage,
+                style: const TextStyle(color: Colors.white, fontSize: 18),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton(
+              onPressed: _retryLoading,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue[700],
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
+              ),
+              child: const Text('Retry'),
+            ),
+            const SizedBox(height: 12),
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text(
+                'Go Back',
+                style: TextStyle(color: Colors.white70),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _retryLoading() {
+    if (mounted) {
+      setState(() {
+        _isLoading = true;
+        _hasError = false;
+        _errorMessage = '';
+      });
+
+      // Reset timeout
+      _loadingTimeout?.cancel();
+      _loadingTimeout = Timer(const Duration(seconds: 30), () {
+        if (mounted && _isLoading) {
+          setState(() {
+            _isLoading = false;
+            _hasError = true;
+            _errorMessage = 'Model loading timed out. Please try again later.';
+          });
+        }
+      });
+    }
+  }
+
   void _handleScaleUpdate(ScaleUpdateDetails details) {
     if (_isGlbModel && _isModelLoaded) {
-      // Handle zoom
-      final newZoom = (_currentZoom / details.scale).clamp(_minZoom, _maxZoom);
-      if (newZoom != _currentZoom) {
-        setState(() {
-          _currentZoom = newZoom;
-        });
-        _glbViewerKey.currentState?.setZoom(_currentZoom);
-      }
+      // Debounce zoom updates
+      _debounceTimer?.cancel();
+      _debounceTimer = Timer(const Duration(milliseconds: 10), () {
+        if (mounted) {
+          // Handle zoom
+          final newZoom = (_currentZoom / details.scale).clamp(
+            _minZoom,
+            _maxZoom,
+          );
+          if (newZoom != _currentZoom) {
+            setState(() {
+              _currentZoom = newZoom;
+            });
+
+            // Safe access to the GLB viewer
+            try {
+              final viewerState = _glbViewerKey.currentState;
+              if (viewerState != null) {
+                viewerState.setZoom(_currentZoom);
+              }
+            } catch (error) {
+              // Silent catch - don't crash the UI for rendering issues
+              debugPrint('Error setting zoom: $error');
+            }
+          }
+        }
+      });
     }
   }
 
   void _handleModelLoadState(bool isLoaded) {
-    if (mounted && isLoaded != _isModelLoaded) {
+    if (mounted) {
+      // Cancel timeout if model loaded successfully
+      if (isLoaded) {
+        _loadingTimeout?.cancel();
+      }
+
       setState(() {
         _isModelLoaded = isLoaded;
         _isLoading = !isLoaded;
@@ -202,28 +343,50 @@ class _ThreeDimensionalViewPageState extends State<ThreeDimensionalViewPage>
     setState(() {
       _currentZoom = (_currentZoom - 1.0).clamp(_minZoom, _maxZoom);
     });
-    _glbViewerKey.currentState?.setZoom(_currentZoom);
+    _safelySetZoom(_currentZoom);
   }
 
   void _zoomOut() {
     setState(() {
       _currentZoom = (_currentZoom + 1.0).clamp(_minZoom, _maxZoom);
     });
-    _glbViewerKey.currentState?.setZoom(_currentZoom);
+    _safelySetZoom(_currentZoom);
+  }
+
+  void _safelySetZoom(double zoom) {
+    try {
+      final viewerState = _glbViewerKey.currentState;
+      if (viewerState != null) {
+        viewerState.setZoom(zoom);
+      }
+    } catch (error) {
+      debugPrint('Error setting zoom: $error');
+    }
   }
 
   void _rotateLeft() {
     setState(() {
       _rotationX -= 15;
     });
-    _glbViewerKey.currentState?.rotateModel(_rotationX, _rotationY);
+    _safelyRotateModel();
   }
 
   void _rotateRight() {
     setState(() {
       _rotationX += 15;
     });
-    _glbViewerKey.currentState?.rotateModel(_rotationX, _rotationY);
+    _safelyRotateModel();
+  }
+
+  void _safelyRotateModel() {
+    try {
+      final viewerState = _glbViewerKey.currentState;
+      if (viewerState != null) {
+        viewerState.rotateModel(_rotationX, _rotationY);
+      }
+    } catch (error) {
+      debugPrint('Error rotating model: $error');
+    }
   }
 
   void _resetCamera() {
@@ -232,6 +395,14 @@ class _ThreeDimensionalViewPageState extends State<ThreeDimensionalViewPage>
       _rotationX = 0.0;
       _rotationY = 0.0;
     });
-    _glbViewerKey.currentState?.resetCameraOrbit();
+
+    try {
+      final viewerState = _glbViewerKey.currentState;
+      if (viewerState != null) {
+        viewerState.resetCameraOrbit();
+      }
+    } catch (error) {
+      debugPrint('Error resetting camera: $error');
+    }
   }
 }
