@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kidventure/constants/app_colors.dart';
 import '../data/transportation_data.dart';
 import '../models/transportation_model.dart';
 import '../widgets/gamification_row.dart';
@@ -61,8 +62,9 @@ class PuzzleScreenState extends State<PuzzleScreen> {
           content: Text(
             'Try again!',
             style: TextStyle(
-                fontSize: MediaQuery.of(context).size.width * 0.045,
-                color: Colors.white),
+              fontSize: MediaQuery.of(context).size.width * 0.045,
+              color: Colors.white,
+            ),
           ),
         ),
       );
@@ -72,8 +74,9 @@ class PuzzleScreenState extends State<PuzzleScreen> {
   void _nextPuzzle() {
     setState(() {
       int currentIndex = transportationVehicles.indexOf(currentVehicle);
-      currentVehicle = transportationVehicles[
-          (currentIndex + 1) % transportationVehicles.length];
+      currentVehicle =
+          transportationVehicles[(currentIndex + 1) %
+              transportationVehicles.length];
       letters = currentVehicle.name.split('');
       shuffledLetters = List.from(letters)..shuffle();
       selectedLetters = List.filled(letters.length, '');
@@ -86,50 +89,56 @@ class PuzzleScreenState extends State<PuzzleScreen> {
 
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(color: Color(0xFFFFF5F5)),
-        child: Directionality(
-          textDirection: TextDirection.ltr,
-          child: Center(
-            child: SingleChildScrollView(
-              padding: EdgeInsets.all(screenWidth * 0.04),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  GamificationRow(score: score, level: level),
-                  SizedBox(height: screenWidth * 0.05),
-                  EmojiCircle(emoji: currentVehicle.emoji),
-                  SizedBox(height: screenWidth * 0.075),
-                  Wrap(
+        decoration: BoxDecoration(color: AppColors.background),
+        child: Center(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.all(screenWidth * 0.04),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                GamificationRow(score: score, level: level),
+                SizedBox(height: screenWidth * 0.05),
+                EmojiCircle(emoji: currentVehicle.emoji),
+                SizedBox(height: screenWidth * 0.075),
+                GridView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: letters.length > 6 ? 6 : letters.length,
+                    childAspectRatio: 1,
+                    crossAxisSpacing: screenWidth * 0.02,
+                    mainAxisSpacing: screenWidth * 0.02,
+                  ),
+                  itemCount: letters.length,
+                  itemBuilder: (context, index) {
+                    return LetterDropTarget(
+                      letter: letters[index],
+                      selectedLetter: selectedLetters[index],
+                      onAccept: (data) {
+                        setState(() {
+                          selectedLetters[index] = data;
+                          shuffledLetters.remove(data);
+                        });
+                      },
+                    );
+                  },
+                ),
+                SizedBox(height: screenWidth * 0.075),
+                Center(
+                  child: Wrap(
                     alignment: WrapAlignment.center,
                     spacing: screenWidth * 0.02,
                     runSpacing: screenWidth * 0.02,
-                    children: List.generate(
-                      letters.length,
-                      (index) => LetterDropTarget(
-                        letter: letters[index],
-                        selectedLetter: selectedLetters[index],
-                        onAccept: (data) {
-                          setState(() {
-                            selectedLetters[index] = data;
-                            shuffledLetters.remove(data);
-                          });
-                        },
-                      ),
-                    ),
+                    children:
+                        shuffledLetters.map((letter) {
+                          return LetterDraggable(letter: letter);
+                        }).toList(),
                   ),
-                  SizedBox(height: screenWidth * 0.075),
-                  Wrap(
-                    alignment: WrapAlignment.center,
-                    spacing: screenWidth * 0.02,
-                    runSpacing: screenWidth * 0.02,
-                    children: shuffledLetters
-                        .map((letter) => LetterDraggable(letter: letter))
-                        .toList(),
-                  ),
-                  SizedBox(height: screenWidth * 0.1),
-                  AnswerButton(onPressed: _checkAnswer),
-                ],
-              ),
+                ),
+                SizedBox(height: screenWidth * 0.1),
+                AnswerButton(onPressed: _checkAnswer),
+              ],
             ),
           ),
         ),

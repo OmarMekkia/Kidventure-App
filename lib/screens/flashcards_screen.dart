@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:kidventure/constants/app_colors.dart';
 import 'package:kidventure/data/topics.dart';
 import '../widgets/topic_card.dart';
+import '../widgets/staggered_animation.dart';
 
 class FlashcardsScreen extends StatefulWidget {
   const FlashcardsScreen({super.key});
@@ -50,12 +51,16 @@ class _FlashcardsScreenState extends State<FlashcardsScreen> {
               Expanded(
                 child: ListView.builder(
                   itemCount: topics.length,
+                  physics: BouncingScrollPhysics(),
                   itemBuilder: (context, index) {
-                    return Padding(
-                      padding: EdgeInsets.symmetric(vertical: height * 0.01),
-                      child: TopicCard(
-                        topic: topics[index],
-                        animationDelay: Duration(milliseconds: index * 100),
+                    return StaggeredAnimation(
+                      delay: index * 0.2,
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(vertical: height * 0.01),
+                        child: TopicCard(
+                          topic: topics[index],
+                          animationDelay: Duration(milliseconds: index * 100),
+                        ),
                       ),
                     );
                   },

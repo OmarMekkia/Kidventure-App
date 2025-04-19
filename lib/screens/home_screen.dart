@@ -135,24 +135,19 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildHomeContent() {
-    return SingleChildScrollView(
+    return ListView.builder(
       physics: const BouncingScrollPhysics(),
       padding: const EdgeInsets.all(16.0),
-      child: Column(
-        spacing: 16,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ...featureCardContents.asMap().entries.map(
-            (entry) => StaggeredAnimation(
-              delay: 0.2 + (entry.key * 0.1),
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 16.0),
-                child: FeatureCard(featureCardContent: entry.value),
-              ),
-            ),
+      itemCount: featureCardContents.length,
+      itemBuilder: (context, index) {
+        return StaggeredAnimation(
+          delay: 0.2 + (index * 0.1),
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 16.0),
+            child: FeatureCard(featureCardContent: featureCardContents[index]),
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 

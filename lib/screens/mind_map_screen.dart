@@ -78,8 +78,9 @@ class _MindMapScreenState extends State<MindMapScreen>
                         ),
                   ),
                 ),
-                ...bodyParts.map(
-                  (part) => Align(
+                ...List.generate(bodyParts.length, (index) {
+                  final part = bodyParts[index];
+                  return Align(
                     alignment: part.alignment,
                     child: MindMapNode(
                       emoji: part.emoji,
@@ -92,8 +93,8 @@ class _MindMapScreenState extends State<MindMapScreen>
                             part.fact,
                           ),
                     ),
-                  ),
-                ),
+                  );
+                }),
                 if (_showFact)
                   FactOverlay(
                     emoji: _currentEmoji,

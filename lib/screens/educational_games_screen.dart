@@ -85,43 +85,46 @@ class _EducationalGamesScreenState extends State<EducationalGamesScreen> {
   }
 
   Widget _buildCategoryChips() {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      physics: const BouncingScrollPhysics(),
-      child: Row(
-        children:
-            categories.map((category) {
-              return Padding(
-                padding: const EdgeInsets.only(right: 8),
-                child: ChoiceChip(
-                  label: Row(
-                    children: [
-                      Icon(category.icon, size: 18),
-                      const SizedBox(width: 8),
-                      Text(category.name),
-                    ],
-                  ),
-                  selected: selectedCategory == category.id,
-                  selectedColor: AppColors.primary,
-                  labelStyle: TextStyle(
-                    color:
-                        selectedCategory == category.id
-                            ? Colors.white
-                            : AppColors.primary,
-                  ),
-                  onSelected: (_) {
-                    setState(() {
-                      selectedCategory = category.id;
-                      _scrollController.animateTo(
-                        0,
-                        duration: const Duration(milliseconds: 300),
-                        curve: Curves.easeOut,
-                      );
-                    });
-                  },
-                ),
-              );
-            }).toList(),
+    return SizedBox(
+      height: 48,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        physics: const BouncingScrollPhysics(),
+        itemCount: categories.length,
+        itemBuilder: (context, index) {
+          final category = categories[index];
+          return Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: ChoiceChip(
+              label: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(category.icon, size: 18),
+                  const SizedBox(width: 8),
+                  Text(category.name),
+                ],
+              ),
+              selected: selectedCategory == category.id,
+              selectedColor: AppColors.primary,
+              labelStyle: TextStyle(
+                color:
+                    selectedCategory == category.id
+                        ? Colors.white
+                        : AppColors.primary,
+              ),
+              onSelected: (_) {
+                setState(() {
+                  selectedCategory = category.id;
+                  _scrollController.animateTo(
+                    0,
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeOut,
+                  );
+                });
+              },
+            ),
+          );
+        },
       ),
     );
   }

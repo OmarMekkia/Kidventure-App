@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kidventure/constants/app_colors.dart';
 
 class ResetButton extends StatelessWidget {
   final VoidCallback onPressed;
@@ -10,14 +11,25 @@ class ResetButton extends StatelessWidget {
     final w = MediaQuery.of(context).size.width;
     return ElevatedButton.icon(
       onPressed: onPressed,
-      icon: Icon(Icons.restart_alt, size: w * 0.06),
-      label: Text('Reset Game',
-          style: TextStyle(fontSize: w * 0.055, fontWeight: FontWeight.bold)),
+      icon: Icon(
+        Icons.restart_alt,
+        size: w * 0.06,
+        color: AppColors.background,
+      ),
+      label: Text(
+        'Reset Game',
+        style: TextStyle(
+          fontSize: w * 0.055,
+          fontWeight: FontWeight.bold,
+          color: AppColors.background,
+        ),
+      ),
       style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.redAccent,
+        backgroundColor: AppColors.primary,
         padding: EdgeInsets.symmetric(horizontal: w * 0.08, vertical: w * 0.04),
         shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(w * 0.08)),
+          borderRadius: BorderRadius.circular(w * 0.08),
+        ),
       ),
     );
   }

@@ -1,10 +1,7 @@
 class ChatMessage {
   final String role;
-  late String? content;
+  final String? content;
 
-  ChatMessage({
-    required this.role,
-    required this.content,
-  });
+  ChatMessage({required this.role, this.content});
   bool get isUser => role == 'user';
 }

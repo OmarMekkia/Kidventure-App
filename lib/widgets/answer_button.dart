@@ -24,10 +24,7 @@ class AnswerButton extends StatelessWidget {
         ),
       ),
       onPressed: onPressed,
-      child: Text(
-        'Check Answer',
-        style: TextStyle(color: Colors.white),
-      ),
+      child: Text('Check Answer', style: TextStyle(color: Colors.white)),
     );
   }
 }

@@ -7,11 +7,19 @@ import 'mind_map_screen.dart';
 class PathHomePage extends StatelessWidget {
   const PathHomePage({super.key});
 
+  // Define learning paths data
+  final List<Map<String, dynamic>> _learningPaths = const [
+    {'title': 'Human Body', 'locked': false, 'route': MindMapScreen()},
+    {'title': 'Digestive System', 'locked': true, 'route': null},
+    {'title': 'Respiratory System', 'locked': true, 'route': null},
+    {'title': 'Cells', 'locked': true, 'route': null},
+    {'title': 'Plants', 'locked': true, 'route': null},
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-
       body: LayoutBuilder(
         builder: (context, constraints) {
           final w = constraints.maxWidth;
@@ -20,72 +28,68 @@ class PathHomePage extends StatelessWidget {
           final cardH = h * 0.15;
           final vSpacing = h * 0.25;
 
-          const lockedTitles = [
-            'Digestive System',
-            'Respiratory System',
-            'Cells',
-            'Plants',
-          ];
+          // Calculate positions for path cards
+          final List<Offset> positions = List<Offset>.generate(
+            _learningPaths.length,
+            (i) {
+              final y = (h * 0.1) + i * vSpacing;
+              final isLeft = i.isOdd;
+              final x = isLeft ? (w - cardW) * 0.2 : (w - cardW) * 0.5;
+              return Offset(x, y);
+            },
+          );
 
-          final positions = List<Offset>.generate(5, (i) {
-            final y = (h * 0.1) + i * vSpacing;
-            final isLeft = i.isOdd;
-            final x = isLeft ? (w - cardW) * 0.2 : (w - cardW) * 0.5;
-            return Offset(x, y);
-          });
-          final centers =
+          // Calculate center points for the dashed path
+          final List<Offset> centers =
               positions
                   .map((pos) => Offset(pos.dx + cardW / 2, pos.dy + cardH / 2))
                   .toList();
+
           final contentHeight = positions.last.dy + cardH + (h * 0.05);
 
-          return Stack(
-            children: [
-              SingleChildScrollView(
-                child: SizedBox(
-                  width: w,
-                  height: contentHeight,
-                  child: Stack(
-                    children: [
-                      CustomPaint(
-                        size: Size(w, contentHeight),
-                        painter: DashedPathPainter(centers),
-                      ),
-                      for (int i = 0; i < positions.length; i++)
-                        Positioned(
-                          left: positions[i].dx,
-                          top: positions[i].dy,
-                          child: SizedBox(
-                            width: cardW,
-                            height: cardH,
-                            child:
-                                i == 0
-                                    ? GestureDetector(
-                                      onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder:
-                                                (_) => const MindMapScreen(),
-                                          ),
-                                        );
-                                      },
-                                      child: PathCard(
-                                        title: 'Body Parts',
-                                        locked: false,
-                                      ),
-                                    )
-                                    : PathCard(
-                                      title: lockedTitles[i - 1],
-                                      locked: true,
-                                    ),
-                          ),
-                        ),
-                    ],
+          return SingleChildScrollView(
+            child: SizedBox(
+              height: contentHeight,
+              width: w,
+              child: Stack(
+                children: [
+                  // Draw the dashed path
+                  CustomPaint(
+                    size: Size(w, contentHeight),
+                    painter: DashedPathPainter(centers),
                   ),
-                ),
+
+                  // Path cards using ListView.builder in a Stack
+                  ...List.generate(_learningPaths.length, (index) {
+                    final pathData = _learningPaths[index];
+                    return Positioned(
+                      left: positions[index].dx,
+                      top: positions[index].dy,
+                      width: cardW,
+                      height: cardH,
+                      child: GestureDetector(
+                        onTap: () {
+                          if (!pathData['locked'] &&
+                              pathData['route'] != null) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder:
+                                    (context) => pathData['route'] as Widget,
+                              ),
+                            );
+                          }
+                        },
+                        child: PathCard(
+                          title: pathData['title'] as String,
+                          locked: pathData['locked'] as bool,
+                        ),
+                      ),
+                    );
+                  }),
+                ],
               ),
-            ],
+            ),
           );
         },
       ),

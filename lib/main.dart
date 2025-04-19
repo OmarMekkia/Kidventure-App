@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:kidventure/screens/onboarding_screen.dart';
 import 'package:kidventure/secrets.dart';
+import 'package:kidventure/services/service_locator.dart';
 
 Future<void> main() async {
   // Ensure Flutter binding is initialized
@@ -13,8 +13,11 @@ Future<void> main() async {
   // This is crucial for native splash screen in release mode
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
-  // Initialize Gemini API
-  Gemini.init(apiKey: googleGeminiAPI, enableDebugging: true);
+  // Initialize services with the service locator
+  await ServiceLocator.initialize(
+    geminiApiKey: googleGeminiAPI,
+    enableGeminiDebugging: true,
+  );
 
   runApp(const MyApp());
 }
@@ -36,6 +39,17 @@ class _MyAppState extends State<MyApp> {
     Timer(const Duration(milliseconds: 800), () {
       FlutterNativeSplash.remove();
     });
+  }
+
+  @override
+  void dispose() {
+    try {
+      // Clean up service instances
+      ServiceLocator.instance.dispose();
+    } catch (error) {
+      debugPrint('Error disposing services: $error');
+    }
+    super.dispose();
   }
 
   @override

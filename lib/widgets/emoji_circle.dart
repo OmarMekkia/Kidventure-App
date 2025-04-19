@@ -21,9 +21,8 @@ class EmojiCircle extends StatelessWidget {
           ),
         ],
       ),
-      child: Text(
-        emoji,
-        style: TextStyle(fontSize: screenWidth * 0.3),
+      child: Center(
+        child: Text(emoji, style: TextStyle(fontSize: screenWidth * 0.3)),
       ),
     );
   }

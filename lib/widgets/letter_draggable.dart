@@ -8,7 +8,7 @@ class LetterDraggable extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final letterBoxSize = screenWidth / 7;
+    final letterBoxSize = screenWidth / 6;
     return Draggable<String>(
       data: letter,
       feedback: Material(

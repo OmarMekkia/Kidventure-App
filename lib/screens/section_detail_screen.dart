@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:kidventure/constants/app_colors.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:flutter_flip_card/flutter_flip_card.dart';
 import '../data/emoji_helpers.dart';
@@ -30,10 +31,7 @@ class _SectionDetailScreenState extends State<SectionDetailScreen> {
     final videoId = YoutubePlayer.convertUrlToId(widget.section.videoId) ?? '';
     _youtubeController = YoutubePlayerController(
       initialVideoId: videoId,
-      flags: const YoutubePlayerFlags(
-        autoPlay: false,
-        mute: false,
-      ),
+      flags: const YoutubePlayerFlags(autoPlay: false, mute: false),
     );
   }
 
@@ -52,12 +50,12 @@ class _SectionDetailScreenState extends State<SectionDetailScreen> {
     final crossAxisCount = (screenWidth / 180).floor();
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFFF5F5),
+      backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: widget.topicColor.withValues(alpha: 0.4),
         title: Text(
           widget.section.name,
-          style: GoogleFonts.crimsonPro(
+          style: GoogleFonts.crimsonText(
             fontSize: screenWidth * 0.07,
             color: Colors.black,
           ),
@@ -127,11 +125,12 @@ class _SectionDetailScreenState extends State<SectionDetailScreen> {
         ),
       );
     }
-    final backgroundColor = Color.lerp(
-      widget.topicColor,
-      const Color.fromARGB(255, 253, 235, 235),
-      0.8,
-    )!;
+    final backgroundColor =
+        Color.lerp(
+          widget.topicColor,
+          const Color.fromARGB(255, 253, 235, 235),
+          0.8,
+        )!;
     final iconSize = padding * 3;
     Widget content;
     switch (widget.section.name) {
