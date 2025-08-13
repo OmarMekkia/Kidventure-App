@@ -1,0 +1,58 @@
+name: kidventure
+description: "A new Flutter project."
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: ^3.7.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_3d_controller: ^2.1.0
+  youtube_player_flutter: ^9.1.1
+  flutter_flip_card: ^0.0.6
+  google_fonts: ^6.2.1
+  http: ^1.1.0
+  flutter_native_splash: ^2.4.5
+  flutter_launcher_icons: ^0.14.3
+  lottie: ^3.3.1
+  fl_chart: ^0.70.2
+  flutter_gemini: ^3.0.0
+  speech_to_text: ^7.0.0
+  animated_text_kit: ^4.2.3
+  smooth_page_indicator: ^1.1.0
+  flutter_tts: ^4.2.2
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
+    - assets/fonts/
+    - assets/models/
+    - assets/lotties/
+  fonts:
+    - family: CrimsonText
+      fonts:
+        - asset: assets/fonts/CrimsonText-Bold.ttf
+        - asset: assets/fonts/CrimsonText-BoldItalic.ttf
+        - asset: assets/fonts/CrimsonText-Italic.ttf
+        - asset: assets/fonts/CrimsonText-Regular.ttf
+        - asset: assets/fonts/CrimsonText-SemiBold.ttf
+        - asset: assets/fonts/CrimsonText-SemiBoldItalic.ttf
+
+flutter_native_splash:
+  background_image: assets/images/splash_screen_image.png
+  android: true
+  ios: true
+  web: false
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/logo.png"
+  background_color: "#FFF5F5"

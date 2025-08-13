@@ -1,0 +1,143 @@
+plugins {
+    id "com.android.application"
+    id "kotlin-android"
+    id "dev.flutter.flutter-gradle-plugin"
+}
+
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withReader('UTF-8') { reader ->
+        localProperties.load(reader)
+    }
+}
+
+def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
+if (flutterVersionCode == null) {
+    flutterVersionCode = '1'
+}
+
+def flutterVersionName = localProperties.getProperty('flutter.versionName')
+if (flutterVersionName == null) {
+    flutterVersionName = '1.0'
+}
+
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file('key.properties')
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
+android {
+    namespace "com.kidapps.kidventure"
+    compileSdkVersion 34
+    ndkVersion flutter.ndkVersion
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+
+    defaultConfig {
+        applicationId "com.kidapps.kidventure"
+        minSdkVersion 21
+        targetSdkVersion flutter.targetSdkVersion
+        versionCode flutterVersionCode.toInteger()
+        versionName flutterVersionName
+    }
+
+    signingConfigs {
+        debug {
+            storeFile rootProject.file('app/src/debug/debug.keystore')
+            if (!storeFile.exists()) {
+                storeFile = file(System.getProperty('user.home') + '/.android/debug.keystore')
+            }
+            storePassword 'android'
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+        }
+        
+        // Add a temporary signing config for release builds
+        tempRelease {
+            storeFile rootProject.file('app/temp-release.keystore')
+            if (!storeFile.exists()) {
+                exec {
+                    workingDir '.'
+                    commandLine 'keytool', '-genkey', '-v', 
+                                '-keystore', rootProject.file('app/temp-release.keystore'),
+                                '-storepass', 'android', 
+                                '-alias', 'release',
+                                '-keypass', 'android', 
+                                '-keyalg', 'RSA',
+                                '-keysize', '2048',
+                                '-validity', '10000',
+                                '-dname', 'CN=Android Release,O=Android,C=US'
+                }
+            }
+            storePassword 'android'
+            keyAlias 'release'
+            keyPassword 'android'
+        }
+        
+        if (keystorePropertiesFile.exists()) {
+            release {
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+                storeFile file(keystoreProperties['storeFile'])
+                storePassword keystoreProperties['storePassword']
+            }
+        }
+    }
+    
+    buildTypes {
+        release {
+            // First try release keys, then use our temp release config if that doesn't exist
+            signingConfig keystorePropertiesFile.exists() ? signingConfigs.release : signingConfigs.tempRelease
+        }
+    }
+}
+
+// Create debug keystore if it doesn't exist
+def debugKeystoreFile = file(System.getProperty('user.home') + '/.android/debug.keystore')
+if (!debugKeystoreFile.exists()) {
+    android.buildTypes.release.signingConfig = null
+    
+    task createDebugKeystore {
+        doLast {
+            exec {
+                workingDir '.'
+                commandLine 'keytool', '-genkey', '-v', 
+                           '-keystore', System.getProperty('user.home') + '/.android/debug.keystore',
+                           '-storepass', 'android', 
+                           '-alias', 'androiddebugkey',
+                           '-keypass', 'android', 
+                           '-keyalg', 'RSA',
+                           '-keysize', '2048',
+                           '-validity', '10000',
+                           '-dname', 'CN=Android Debug,O=Android,C=US'
+            }
+        }
+    }
+    
+    tasks.whenTaskAdded { task ->
+        if (task.name == 'packageRelease') {
+            task.dependsOn createDebugKeystore
+        }
+    }
+}
+
+flutter {
+    source '../..'
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.10"
+} 
